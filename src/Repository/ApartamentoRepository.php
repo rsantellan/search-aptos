@@ -68,7 +68,7 @@ class ApartamentoRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager
-            ->createQuery('select a.name, a.url, a.active, a.latitud, a.longitud from App\Entity\Apartamento a where a.active = :active and a.latitud is not null')
+            ->createQuery('select a.name, a.hash, a.active, a.latitud, a.longitud from App\Entity\Apartamento a where a.active = :active and a.latitud is not null')
             ->setParameter('active', true)
         ;
         return $query->execute();

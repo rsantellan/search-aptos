@@ -63,6 +63,21 @@ class ApartamentosController extends AbstractController
     public function map()
     {
         $data = $this->getDoctrine()->getRepository(Apartamento::class)->getAllActiveMarkers();
-        return $this->render('apartamentos/map.html.twig', ['data' => $data]);
+        $sendData = [];
+        foreach($data as $apto){
+            $aux = new \stdClass();
+            $aux->name = $apto['name'];
+            $aux->longitud = $apto['longitud'];
+            $aux->latitud = $apto['latitud'];
+            $aux->url = $this->generateUrl('viewpublication', ['hash' => $apto['hash']]);
+            $sendData[] = $aux;
+        }
+        return $this->render('apartamentos/map.html.twig', ['data' => $sendData]);
+    }
+
+    public function apto($hash)
+    {
+        $apto = $this->getDoctrine()->getRepository(Apartamento::class)->findOneBy(['hash' => $hash]);
+        return $this->render('apartamentos/apto.html.twig', ['apto' => $apto]);
     }
 }

@@ -98,6 +98,13 @@ class Apartamento
      */
     private $createdAt = 'CURRENT_TIMESTAMP';
 
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="hash", type="string", length=255, nullable=true)
+     */
+    private $hash;
+
     public function getUrl(): ?string
     {
         return $this->url;
@@ -242,6 +249,18 @@ class Apartamento
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    public function setHash(?string $hash): self
+    {
+        $this->hash = $hash;
 
         return $this;
     }

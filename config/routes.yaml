@@ -18,3 +18,7 @@ sinmapa:
     path: /nomap.html
     controller: App\Controller\ApartamentosController::nomap
 
+viewpublication:
+    path: /apto/{hash}
+    controller: App\Controller\ApartamentosController::apto
+

@@ -13,16 +13,14 @@
     <script>
 
         var data = Array();
-        var i = 1;
         {% for apartment in data %}
             var apartment = new Object();
-            apartment.title = "{{ apartment.name }}  - {{  apartment.url }}";
+            apartment.title = "{{ apartment.name }}";
             apartment.longitud = {{ apartment.longitud }};
             apartment.latitud = {{ apartment.latitud }};
-            if(i == 1){
-                data.push(apartment);
-            }
-            i = 2;
+            apartment.url = '{{ apartment.url }}';
+            data.push(apartment);
+
         {% endfor %}
 
         var map = new ol.Map({
@@ -55,31 +53,30 @@
         });
         map.addLayer(markerVectorLayer);
         map.on('click', function(evt) {
+            var delta = 0.01;
             var coordinates =ol.proj.toLonLat(evt.coordinate);
-            console.log(evt.coordinate);
-            console.log(ol.proj.toLonLat(evt.coordinate));
-            var minLatitud = Math.abs(coordinates[1] - 0.1);
-            var maxLatitud = Math.abs(coordinates[1] + 0.1);
-            var minLongitud = Math.abs(coordinates[0] - 0.1);
-            var maxLongitud = Math.abs(coordinates[0] + 0.1);
-            console.log(minLatitud);
-            console.log(maxLatitud);
-            console.log('longitud');
-            console.log(minLongitud);
-            console.log(maxLongitud);
+            var minLatitud = Math.abs(coordinates[1]) - delta;
+            var maxLatitud = Math.abs(coordinates[1]) + delta;
+            var minLongitud = Math.abs(coordinates[0]) - delta;
+            var maxLongitud = Math.abs(coordinates[0]) + delta;
+            var showModal = new Array();
             for(var apto of data){
-                console.log('calculos');
-                console.log(apto.longitud);
-                console.log(apto.latitud);
-                console.log(Math.abs(apto.longitud) >= minLongitud);
-                console.log(Math.abs(apto.longitud) <= maxLongitud);
                 if(Math.abs(apto.longitud) >= minLongitud && Math.abs(apto.longitud) <= maxLongitud){
                     if(Math.abs(apto.latitud) >= minLatitud && Math.abs(apto.latitud) <= maxLatitud){
-                        console.log(apto);
+                        showModal.push(apto);
                     }
                 }
             }
-            //alert(coordinates);
+            $('#myModalBody').html('');
+            for(var apto of showModal){
+                $('#myModalBody').append($("<a>", {
+                    title: apto.title,
+                    href: apto.url,
+                    target: '_blank'
+                }).append( apto.title ));
+                $('#myModalBody').append($("<br>"));
+            }
+            $('#myModal').modal('show');
         });
     </script>
 {% endblock %}
@@ -87,6 +84,24 @@
     <div class="row">
         <div class="col-lg-12 text-center">
             <div id="map" class="map"></div>
+            <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Propiedades cercanas</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="myModalBody">
+                            <p>Modal body text goes here.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

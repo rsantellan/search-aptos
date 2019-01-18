@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{  apto.name }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h1 class="mt-5">{{  apto.name }}</h1>
+            <p class="lead">{{  apto.image | raw }}</p>
+            <p class="lead">{{  apto.url }}</p>
+            <p class="lead">U$S {{  apto.price }}</p>
+            <p class="lead">{{  apto.longDescription | raw }}</p>
+            <p class="lead">{{  apto.notes }}</p>
+            {#{ dump(apto) }#}
+        </div>
+    </div>
+{% endblock %}
