@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Listado de activos{% endblock %}
+
+{% block body %}
+    {% set counter = 0 %}
+    {% set loopCounter = 0 %}
+    {% for apartment in list %}
+        {% if counter == 0 %}
+            <div class="row">
+            {% set counter = 1 %}
+        {% endif %}
+        <div class="col-lg-3">
+            <!-- panel-warning -->
+            <section class="panel panel-primary">
+                <header class="panel-heading"><strong>{{ apartment.name }}</strong></header>
+                <div class="panel-body">
+                    <div class="image">
+                        <a href="{{ apartment.url }}">
+                            {{ apartment.imageWithFixedCss | raw }}
+                        </a>
+                    </div>
+                    <div class="price text-center">U$S <strong>{{ apartment.formatedPrice }}</strong></div>
+                </div>
+            </section>
+        </div>
+        {% set loopCounter = loopCounter + 1 %}
+        {% if loopCounter == 4 %}
+            </div>
+            {% set counter = 0 %}
+            {% set loopCounter = 0 %}
+        {% endif %}
+    {% endfor %}
+    {% if counter == 1 %}
+        </div>
+    {% endif %}
+    <div class="row">
+
+    </div>
+{% endblock %}

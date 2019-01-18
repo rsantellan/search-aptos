@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My cool project{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h1 class="mt-5">A Bootstrap 4 Starter Template</h1>
+            <p class="lead">Complete with pre-defined file paths and responsive navigation!</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            Activos en el mapa
+            <span>Posible: <strong>{{ data.active.inmap.posible }}</strong></span>
+            <span>No Posible: <strong>{{ data.active.inmap.notposible }}</strong></span>
+        </div>
+        <div class="col-sm">
+            Activos sin mapa
+            <span>Posible: <strong>{{ data.active.notmap.posible }}</strong></span>
+            <span>No Posible: <strong>{{ data.active.notmap.notposible }}</strong></span>
+        </div>
+        <div class="col-sm">
+            No activos <strong>{{ data.notactive }}</strong>
+        </div>
+    </div>
+
+{% endblock %}

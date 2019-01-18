@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mapa{% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('vendor/openlayer/ol.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('vendor/openlayer/ol.js') }}"></script>
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script>
+
+        var data = Array();
+        var i = 1;
+        {% for apartment in data %}
+            var apartment = new Object();
+            apartment.title = "{{ apartment.name }}  - {{  apartment.url }}";
+            apartment.longitud = {{ apartment.longitud }};
+            apartment.latitud = {{ apartment.latitud }};
+            if(i == 1){
+                data.push(apartment);
+            }
+            i = 2;
+        {% endfor %}
+
+        var map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-56.148253, -34.886205]),
+                zoom: 12
+            })
+        });
+        var markerList = new Array();
+
+        for(var apto of data){
+            var marker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([apto.longitud ,  apto.latitud ], 'EPSG:4326', 'EPSG:3857')),
+                description: apto.title,
+            });
+            markerList.push(marker);
+        }
+        var markers = new ol.source.Vector({
+            features: markerList
+        });
+
+        var markerVectorLayer = new ol.layer.Vector({
+            source: markers,
+        });
+        map.addLayer(markerVectorLayer);
+        map.on('click', function(evt) {
+            var coordinates =ol.proj.toLonLat(evt.coordinate);
+            console.log(evt.coordinate);
+            console.log(ol.proj.toLonLat(evt.coordinate));
+            var minLatitud = Math.abs(coordinates[1] - 0.1);
+            var maxLatitud = Math.abs(coordinates[1] + 0.1);
+            var minLongitud = Math.abs(coordinates[0] - 0.1);
+            var maxLongitud = Math.abs(coordinates[0] + 0.1);
+            console.log(minLatitud);
+            console.log(maxLatitud);
+            console.log('longitud');
+            console.log(minLongitud);
+            console.log(maxLongitud);
+            for(var apto of data){
+                console.log('calculos');
+                console.log(apto.longitud);
+                console.log(apto.latitud);
+                console.log(Math.abs(apto.longitud) >= minLongitud);
+                console.log(Math.abs(apto.longitud) <= maxLongitud);
+                if(Math.abs(apto.longitud) >= minLongitud && Math.abs(apto.longitud) <= maxLongitud){
+                    if(Math.abs(apto.latitud) >= minLatitud && Math.abs(apto.latitud) <= maxLatitud){
+                        console.log(apto);
+                    }
+                }
+            }
+            //alert(coordinates);
+        });
+    </script>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div id="map" class="map"></div>
+        </div>
+    </div>
+{% endblock %}

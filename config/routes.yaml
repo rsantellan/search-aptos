@@ -1,3 +1,20 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+index:
+    path: /
+    controller: App\Controller\ApartamentosController::index
+
+mapa:
+    path: /mapa.html
+    controller: App\Controller\ApartamentosController::map
+
+inactivos:
+    path: /inactives.html
+    controller: App\Controller\ApartamentosController::inactive
+
+activos:
+    path: /actives.html
+    controller: App\Controller\ApartamentosController::active
+
+sinmapa:
+    path: /nomap.html
+    controller: App\Controller\ApartamentosController::nomap
+

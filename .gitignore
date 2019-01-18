@@ -17,5 +17,5 @@
 /.web-server-pid
 ###< symfony/web-server-bundle ###
 ###> IDE data ###
-/.idea
+/.idea/
 ###< IDE data ###
