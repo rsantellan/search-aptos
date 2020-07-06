@@ -13,11 +13,16 @@ use Doctrine\ORM\Mapping as ORM;
 class Apartamento
 {
     /**
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $url;
 
@@ -104,6 +109,23 @@ class Apartamento
      * @ORM\Column(name="hash", type="string", length=255, nullable=true)
      */
     private $hash;
+
+    public function setId(?int $id) : self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setUrl(?string $url) : self
+    {
+        $this->url = $url;
+        return $this;
+    }
 
     public function getUrl(): ?string
     {

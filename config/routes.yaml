@@ -1,24 +1,11 @@
-index:
-    path: /
-    controller: App\Controller\ApartamentosController::index
+#inactivos:
+#    path: /inactives.html
+#    controller: App\Controller\ApartamentosController::inactive
+#sinmapa:
+#    path: /nomap.html
+#    controller: App\Controller\ApartamentosController::nomap
 
-mapa:
-    path: /mapa.html
-    controller: App\Controller\ApartamentosController::map
-
-inactivos:
-    path: /inactives.html
-    controller: App\Controller\ApartamentosController::inactive
-
-activos:
-    path: /actives.html
-    controller: App\Controller\ApartamentosController::active
-
-sinmapa:
-    path: /nomap.html
-    controller: App\Controller\ApartamentosController::nomap
-
-viewpublication:
-    path: /apto/{hash}
-    controller: App\Controller\ApartamentosController::apto
+#viewpublication:
+#    path: /apto/{hash}
+#    controller: App\Controller\ApartamentosController::apto
 

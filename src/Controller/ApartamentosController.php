@@ -5,35 +5,29 @@
  */
 namespace App\Controller;
 
+use App\Repository\ApartamentoRepository;
+use App\Repository\FocusPointRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Apartamento;
 
 class ApartamentosController extends AbstractController
 {
 
-    public function index()
+    /**
+     * @Route("/", name="index", methods={"GET"})
+     * @param ApartamentoRepository $apartamentoRepository
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function index(ApartamentoRepository $apartamentoRepository)
     {
-        $quantityActivePossibleInMap = $this
-                        ->getDoctrine()
-                        ->getRepository(Apartamento::class)
-                        ->doCount(true, true, true);
-        $quantityActivePossibleNotInMap = $this
-            ->getDoctrine()
-            ->getRepository(Apartamento::class)
-            ->doCount(true, true, false);
-        $quantityActiveNotPossibleInMap = $this
-            ->getDoctrine()
-            ->getRepository(Apartamento::class)
-            ->doCount(true, false, true);
-        $quantityActiveNotPossibleNotInMap = $this
-            ->getDoctrine()
-            ->getRepository(Apartamento::class)
-            ->doCount(true, false, false);
-        $quantityNotActive =  $this
-            ->getDoctrine()
-            ->getRepository(Apartamento::class)
-            ->doCount(false, null, null);
+        $quantityActivePossibleInMap = $apartamentoRepository->doCount(true, true, true);
+        $quantityActivePossibleNotInMap = $apartamentoRepository->doCount(true, true, false);
+        $quantityActiveNotPossibleInMap = $apartamentoRepository->doCount(true, false, true);
+        $quantityActiveNotPossibleNotInMap = $apartamentoRepository->doCount(true, false, false);
+        $quantityNotActive =  $apartamentoRepository->doCount(false, null, null);
         $data = [
             'active' =>
                 [
@@ -51,18 +45,42 @@ class ApartamentosController extends AbstractController
         return $this->render('apartamentos/index.html.twig', ['data' => $data]);
     }
 
-    public function active()
+    /**
+     * @Route("/actives.html", name="activos", methods={"GET"})
+     */
+    public function active(ApartamentoRepository $apartamentoRepository)
     {
-        $data = $this
-            ->getDoctrine()
-            ->getRepository(Apartamento::class)
-            ->getAllActive();
+        $data = $apartamentoRepository->getAllActive();
         return $this->render('apartamentos/activelist.html.twig', ['list' => $data]);
     }
 
-    public function map()
+    /**
+     * @Route("/inactives.html", name="inactivos", methods={"GET"})
+     */
+    public function inactive(ApartamentoRepository $apartamentoRepository)
     {
-        $data = $this->getDoctrine()->getRepository(Apartamento::class)->getAllActiveMarkers();
+        $data = $apartamentoRepository->getAllActive();
+        return $this->render('apartamentos/activelist.html.twig', ['list' => $data]);
+    }
+
+    /**
+     * @Route("/mapa.html", name="mapa", methods={"GET"})
+     * @param ApartamentoRepository $apartamentoRepository
+     * @param FocusPointRepository $focusPointRepository
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function map(ApartamentoRepository $apartamentoRepository, FocusPointRepository $focusPointRepository)
+    {
+        $focusPoints = $focusPointRepository->findAll();
+        $focusPointData = [];
+        foreach ($focusPoints as $focusPoint) {
+            $focusPointData[] = [
+                'name' => $focusPoint->getName(),
+                'latitud' => $focusPoint->getLatitud(),
+                'longitud' => $focusPoint->getLongitud(),
+            ];
+        }
+        $data = $apartamentoRepository->getAllActiveMarkers();
         $sendData = [];
         foreach($data as $apto){
             $aux = new \stdClass();
@@ -72,12 +90,21 @@ class ApartamentosController extends AbstractController
             $aux->url = $this->generateUrl('viewpublication', ['hash' => $apto['hash']]);
             $sendData[] = $aux;
         }
-        return $this->render('apartamentos/map.html.twig', ['data' => $sendData]);
+        return $this->render('apartamentos/map.html.twig', ['data' => $sendData, 'focusPoints' => $focusPointData]);
     }
-
-    public function apto($hash)
+    /**
+     * @Route("/apto/{hash}", name="viewpublication", methods={"GET"})
+     */
+    public function apto(ApartamentoRepository $apartamentoRepository, string $hash)
     {
-        $apto = $this->getDoctrine()->getRepository(Apartamento::class)->findOneBy(['hash' => $hash]);
+        $apto = $apartamentoRepository->findOneBy(['hash' => $hash]);
         return $this->render('apartamentos/apto.html.twig', ['apto' => $apto]);
+    }
+    /**
+     * @Route("/nomap.html", name="sinmapa", methods={"GET"})
+     */
+    public function sinmapa()
+    {
+
     }
 }

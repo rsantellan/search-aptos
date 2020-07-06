@@ -11,7 +11,14 @@
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
     <script>
-
+        var focusPoints = Array();
+        {% for focusPoint in focusPoints %}
+        var focusPoint = new Object();
+        focusPoint.name = "{{ focusPoint.name }}";
+        focusPoint.longitud = {{ focusPoint.longitud }};
+        focusPoint.latitud = {{ focusPoint.latitud }};
+        focusPoints.push(focusPoint);
+        {% endfor %}
         var data = Array();
         {% for apartment in data %}
             var apartment = new Object();
@@ -20,7 +27,6 @@
             apartment.latitud = {{ apartment.latitud }};
             apartment.url = '{{ apartment.url }}';
             data.push(apartment);
-
         {% endfor %}
 
         var map = new ol.Map({
@@ -37,13 +43,56 @@
         });
         var markerList = new Array();
 
+        var style1 = [
+            new ol.style.Style({
+                image: new ol.style.Icon({
+                    scale: .05,
+                    src: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Green_Dot.svg",
+                    //src: "src/dot.png",
+                }),
+                zIndex: 5,
+            }),
+        ];
         for(var apto of data){
             var marker = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([apto.longitud ,  apto.latitud ], 'EPSG:4326', 'EPSG:3857')),
                 description: apto.title,
             });
+            marker.setStyle(style1);
             markerList.push(marker);
         }
+        for(var focusPoint of focusPoints) {
+            var marker = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([focusPoint.longitud ,  focusPoint.latitud ], 'EPSG:4326', 'EPSG:3857')),
+                description: focusPoint.name,
+            });
+            markerList.push(marker);
+            var circle = new ol.geom.Circle(ol.proj.transform([focusPoint.longitud ,  focusPoint.latitud ], 'EPSG:4326', 'EPSG:3857'), 1000);
+
+            var CircleFeature = new ol.Feature(circle);
+            var vectorSource = new ol.source.Vector({
+                projection: 'EPSG:4326',
+            });
+
+            vectorSource.addFeatures([CircleFeature]);
+
+
+            var layer = new ol.layer.Vector({
+                source: vectorSource,
+                style: [
+                    new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'blue',
+                            width: 3
+                        }),
+                        fill: new ol.style.Fill({
+                            color: 'rgba(0, 0, 255, 0.1)'
+                        })
+                    })]
+            });
+            map.addLayer(layer);
+        }
+
         var markers = new ol.source.Vector({
             features: markerList
         });
@@ -60,10 +109,18 @@
             var minLongitud = Math.abs(coordinates[0]) - delta;
             var maxLongitud = Math.abs(coordinates[0]) + delta;
             var showModal = new Array();
+            var showModalFocus = new Array();
             for(var apto of data){
                 if(Math.abs(apto.longitud) >= minLongitud && Math.abs(apto.longitud) <= maxLongitud){
                     if(Math.abs(apto.latitud) >= minLatitud && Math.abs(apto.latitud) <= maxLatitud){
                         showModal.push(apto);
+                    }
+                }
+            }
+            for(var focusPoint of focusPoints){
+                if(Math.abs(focusPoint.longitud) >= minLongitud && Math.abs(focusPoint.longitud) <= maxLongitud){
+                    if(Math.abs(focusPoint.latitud) >= minLatitud && Math.abs(focusPoint.latitud) <= maxLatitud){
+                        showModalFocus.push(focusPoint);
                     }
                 }
             }
@@ -74,6 +131,14 @@
                     href: apto.url,
                     target: '_blank'
                 }).append( apto.title ));
+                $('#myModalBody').append($("<br>"));
+            }
+            $('#myModalBody').append($("<h5>").html('Escuelas'));
+            for(var focusPoint of showModalFocus){
+                $('#myModalBody').append($("<a>", {
+                    title: focusPoint.name,
+                    href: 'javascript:void(0)'
+                }).append( focusPoint.name ));
                 $('#myModalBody').append($("<br>"));
             }
             $('#myModal').modal('show');

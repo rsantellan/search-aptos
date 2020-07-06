@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Apartamento index{% endblock %}
+
+{% block body %}
+    <h1>Apartamento index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Url</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>LongDescription</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Active</th>
+                <th>Possible</th>
+                <th>Notes</th>
+                <th>CreatedAt</th>
+                <th>Hash</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for apartamento in apartamentos %}
+            <tr>
+                <td>{{ apartamento.url }}</td>
+                <td>{{ apartamento.name }}</td>
+                <td>{{ apartamento.image }}</td>
+                <td>{{ apartamento.price }}</td>
+                <td>{{ apartamento.description }}</td>
+                <td>{{ apartamento.longDescription }}</td>
+                <td>{{ apartamento.latitud }}</td>
+                <td>{{ apartamento.longitud }}</td>
+                <td>{{ apartamento.active ? 'Yes' : 'No' }}</td>
+                <td>{{ apartamento.possible ? 'Yes' : 'No' }}</td>
+                <td>{{ apartamento.notes }}</td>
+                <td>{{ apartamento.createdAt ? apartamento.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ apartamento.hash }}</td>
+                <td>
+                    <a href="{{ path('apartamento_show', {'id': apartamento.id}) }}">show</a>
+                    <a href="{{ path('apartamento_edit', {'id': apartamento.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="14">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('apartamento_new') }}">Create new</a>
+{% endblock %}

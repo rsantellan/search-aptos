@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Apartamento{% endblock %}
+
+{% block body %}
+    <h1>Apartamento</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Url</th>
+                <td>{{ apartamento.url }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ apartamento.name }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{{ apartamento.image }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>{{ apartamento.price }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ apartamento.description }}</td>
+            </tr>
+            <tr>
+                <th>LongDescription</th>
+                <td>{{ apartamento.longDescription }}</td>
+            </tr>
+            <tr>
+                <th>Latitud</th>
+                <td>{{ apartamento.latitud }}</td>
+            </tr>
+            <tr>
+                <th>Longitud</th>
+                <td>{{ apartamento.longitud }}</td>
+            </tr>
+            <tr>
+                <th>Active</th>
+                <td>{{ apartamento.active ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Possible</th>
+                <td>{{ apartamento.possible ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Notes</th>
+                <td>{{ apartamento.notes }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ apartamento.createdAt ? apartamento.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Hash</th>
+                <td>{{ apartamento.hash }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('apartamento_index') }}">back to list</a>
+
+    <a href="{{ path('apartamento_edit', {'url': apartamento.url}) }}">edit</a>
+
+    {{ include('apartamento/_delete_form.html.twig') }}
+{% endblock %}
